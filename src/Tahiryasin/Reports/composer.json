@@ -1,0 +1,25 @@
+{
+    "name": "tahiryasin/bagisto-reports",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tahir Yasin",
+            "email": "scriptbaker@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Tahiryasin\\Reports\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tahiryasin\\Reports\\Providers\\ReportsServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}
