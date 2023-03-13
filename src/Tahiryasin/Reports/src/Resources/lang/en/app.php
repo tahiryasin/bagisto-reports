@@ -18,6 +18,7 @@ return [
         'shipping-report' => 'Shipping Report',
         'refunds-report' => 'Refunds Report',
         'tax-report' => 'Tax Report',
+        'inventory_date_hint' => 'Product Creation Date',
         'from' => 'From',
         'to' => 'To',
         'generate' => 'Generate',

@@ -51,23 +51,22 @@ class ReportsController extends Controller
 
         $path = $criteria['gridName'];
         $gridName = explode("\\", $criteria['gridName']);
+        $fileName = sprintf("%s_%s", last($gridName), time());
 
         $gridInstance = app($path);
-
         $records = $gridInstance->export();
 
         if (! count($records)) {
             session()->flash('warning', trans('admin::app.export.no-records'));
-
             return redirect()->back();
         }
 
         if ($format == 'csv') {
-            return Excel::download(new DataGridExport($records), last($gridName).'.csv');
+            return Excel::download(new DataGridExport($records), $fileName.'.csv');
         }
 
         if ($format == 'xls') {
-            return Excel::download(new DataGridExport($records), last($gridName).'.xlsx');
+            return Excel::download(new DataGridExport($records), $fileName.'.xlsx');
         }
     }
 

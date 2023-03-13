@@ -2,6 +2,7 @@
 
 namespace Tahiryasin\Reports\DataGrids;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
@@ -23,12 +24,6 @@ class InventoryReport extends DataGrid
      */
     protected $index = 'product_id';
 
-    /**
-     * If paginated then value of pagination.
-     *
-     * @var int
-     */
-    protected $itemsPerPage = 10;
 
     /**
      * Locale.
@@ -78,32 +73,37 @@ class InventoryReport extends DataGrid
      */
     public function prepareQueryBuilder()
     {
+        $report_from = request()->post('report_from');
+        $report_to = request()->post('report_to');
+
+        if($report_from)
+            $report_from = Carbon::createFromFormat('Y-m-d', $report_to)->startOfDay();
+        if($report_to)
+            $report_to = Carbon::createFromFormat('Y-m-d', $report_to)->endOfDay();
+
         $whereInChannels = [$this->channel];
         $whereInLocales = [$this->locale];
 
         /* query builder */
         $queryBuilder = DB::table('product_flat')
+
             ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
             ->leftJoin('product_inventories', 'product_flat.product_id', '=', 'product_inventories.product_id')
             ->select(
                 'product_flat.product_id',
                 'products.sku as product_sku',
-                'product_flat.name as product_name',
-//                'product_flat.status',
-                DB::raw('SUM(' . DB::getTablePrefix() . 'product_inventories.qty) as quantity')
+                DB::raw('CASE WHEN product_flat.name IS NOT NULL THEN product_flat.name ELSE "NULL" END as product_name'),
+                DB::raw('CASE WHEN product_inventories.qty IS NOT NULL THEN SUM(' . DB::getTablePrefix() . 'product_inventories.qty) ELSE 0 END as quantity')
             );
+
+        if($report_from && $report_to)
+            $queryBuilder->whereBetween('product_flat.created_at', [$report_from, $report_to]);
 
         $queryBuilder->groupBy('product_flat.product_id', 'product_flat.locale', 'product_flat.channel');
 
         $queryBuilder->whereIn('product_flat.locale', $whereInLocales);
         $queryBuilder->whereIn('product_flat.channel', $whereInChannels);
-
-        $this->addFilter('product_id', 'product_flat.product_id');
-        $this->addFilter('product_name', 'product_flat.name');
-        $this->addFilter('product_sku', 'products.sku');
-        $this->addFilter('product_number', 'product_flat.product_number');
-//        $this->addFilter('status', 'product_flat.status');
-        $this->addFilter('product_type', 'products.type');
+        $queryBuilder->where('product_flat.status', 1);
 
         $this->setQueryBuilder($queryBuilder);
     }
@@ -116,84 +116,9 @@ class InventoryReport extends DataGrid
     public function addColumns()
     {
 
-        $this->addColumn([
-            'index'      => 'product_sku',
-            'label'      => trans('admin::app.datagrid.sku'),
-            'type'       => 'string',
-            'searchable' => true,
-            'sortable'   => true,
-            'filterable' => true,
-        ]);
-
-
-
-        $this->addColumn([
-            'index'      => 'product_name',
-            'label'      => trans('admin::app.datagrid.name'),
-            'type'       => 'string',
-            'searchable' => true,
-            'sortable'   => true,
-            'filterable' => true,
-            'closure'    => function ($row) {
-                if (! empty($row->url_key)) {
-                    return "<a href='" . route('shop.productOrCategory.index', $row->url_key) . "' target='_blank'>" . $row->product_name . "</a>";
-                }
-
-                return $row->product_name;
-            },
-        ]);
-
-        $this->addColumn([
-            'index'      => 'quantity',
-            'label'      => trans('admin::app.datagrid.qty'),
-            'type'       => 'number',
-            'sortable'   => true,
-            'searchable' => false,
-            'filterable' => false,
-            'closure'    => function ($row) {
-                if (is_null($row->quantity)) {
-                    return 0;
-                } else {
-                    return $this->renderQuantityView($row);
-                }
-            },
-        ]);
-    }
-
-    /**
-     * Prepare actions.
-     *
-     * @return void
-     */
-    public function prepareActions()
-    {
 
     }
 
-    /**
-     * Prepare mass actions.
-     *
-     * @return void
-     */
-    public function prepareMassActions()
-    {
 
-    }
 
-    /**
-     * Render quantity view.
-     *
-     * @param  object  $row
-     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
-     */
-    private function renderQuantityView($row)
-    {
-        $product = app(\Webkul\Product\Repositories\ProductRepository::class)->find($row->product_id);
-
-        $inventorySources = app(\Webkul\Inventory\Repositories\InventorySourceRepository::class)->findWhere(['status' => 1]);
-
-        $totalQuantity = $row->quantity;
-
-        return view('admin::catalog.products.datagrid.quantity', compact('product', 'inventorySources', 'totalQuantity'))->render();
-    }
 }

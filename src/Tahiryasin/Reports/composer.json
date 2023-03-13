@@ -1,12 +1,19 @@
 {
     "name": "tahiryasin/bagisto-reports",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Tahir Yasin",
-            "email": "scriptbaker@gmail.com"
-        }
-    ],
+	"types": "bagisto-module",
+	"description": "Sales, Inventory, Shipping, Refunds and Inventory reports for Bagisto opensource.",
+	"version": "1.0.1",
+	"homepage": "https://github.com/tahiryasin/bagisto-reports",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/tahiryasin/bagisto-reports/issues",
+		"email": "scriptbaker@gmail.com"
+	},
+	"author": {
+		"name": "Tahir Yasin",
+		"url": "https://github.com/tahiryasin",
+		"email": "scriptbaker@gmail.com"
+	},
     "require": {},
     "autoload": {
         "psr-4": {

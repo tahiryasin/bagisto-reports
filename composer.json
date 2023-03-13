@@ -1,31 +1,37 @@
 {
-    "name": "tahiryasin/bagisto-reports",
+	"name": "tahiryasin/bagisto-reports",
+	"types": "bagisto-module",
 	"description": "Sales, Inventory, Shipping, Refunds and Inventory reports for Bagisto opensource.",
-    "keywords": [
-        "bagisto",
-        "bagisto-reports"
-    ],
-    "homepage": "https://github.com/tahiryasin/bagisto-reports",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Tahir Yasin",
-            "email": "scriptbaker@gmail.com"
-        }
-    ],
-    "require": {},
-    "autoload": {
-        "psr-4": {
-            "Tahiryasin\\Reports\\": "src/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Tahiryasin\\Reports\\Providers\\ReportsServiceProvider"
-            ],
-            "aliases": {}
-        }
-    },
-    "minimum-stability": "dev"
+	"version": "1.0.1",
+	"homepage": "https://github.com/tahiryasin/bagisto-reports",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/tahiryasin/bagisto-reports/issues",
+		"email": "scriptbaker@gmail.com"
+	},
+	"author": {
+		"name": "Tahir Yasin",
+		"url": "https://github.com/tahiryasin",
+		"email": "scriptbaker@gmail.com"
+	},
+	"keywords": [
+		"bagisto",
+		"bagisto-reports"
+	],
+
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"Tahiryasin\\Reports\\": "src/"
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Tahiryasin\\Reports\\Providers\\ReportsServiceProvider"
+			],
+			"aliases": {}
+		}
+	},
+	"minimum-stability": "dev"
 }
